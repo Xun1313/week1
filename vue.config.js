@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: '/week1/',
+  publicPath: '/week1/dist/',
   outputDir: undefined,
   assetsDir: undefined,
   runtimeCompiler: undefined,
