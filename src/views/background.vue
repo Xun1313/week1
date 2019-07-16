@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../assets/_variables.scss";
 .dashboard {
   display: flex;
@@ -46,6 +46,10 @@
       i {
         margin-bottom: 20px;
         font-size: 30px;
+        cursor: pointer;
+      }
+      i:hover{
+        color: lighten(#00000062, 10%)
       }
     }
     &-all {

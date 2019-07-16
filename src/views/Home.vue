@@ -8,7 +8,8 @@
           <div class="grass grass-3"></div>
         </div>
         <div class="circles">
-          <i class="fas" :class="[123?'fa-play':'fa-pause']"></i>
+          <i class="fas" v-if="!rest" :class="[play?'fa-play':'fa-pause']" @click="countDown()"></i>
+          <i class="fas" v-if="rest" :class="[play?'fa-play':'fa-pause']" @click="countDown2()"></i>
           <div class="circle"></div>
           <div class="circle"></div>
           <div class="circle"></div>
@@ -20,13 +21,19 @@
           'bright':toBright[index]>=5,'bright':toBright[index]>=4,'bright':toBright[index]>=3,'bright':toBright[index]>=2,'bright':toBright[index]>=1,
       }"-->
       <div class="calculate-num">
-        <i class="fas fa-apple-alt" v-for="(item, index) in 5" :key="item" :data-id="index+1" @click="calculateTomato(item)"></i>
+        <i
+          class="fas fa-apple-alt"
+          v-for="(item, index) in 5"
+          :key="item"
+          :data-id="index+1"
+          @click="calculateTomato(item)"
+        ></i>
       </div>
       <div class="calculate-title" v-if="!toDoTasking">請選擇一個任務</div>
-      <div class="calculate-title" v-if="toDoTasking">{{toDoTasking}}</div>
+      <div class="calculate-title" v-else>{{toDoTasking}}</div>
       <div class="calculate-count">
-        12:50
-        <i class="fas fa-redo-alt"></i>
+        {{moment(time).format('mm:ss')}}
+        <i class="fas fa-redo-alt" @click="stopInterval()"></i>
       </div>
     </div>
 
@@ -50,6 +57,12 @@
 @import "../assets/_variables.scss";
 .home {
   display: flex;
+}
+.yellowBack {
+  background-color: $yellowApple !important;
+}
+.yellowFont {
+  color: $yellowApple !important;
 }
 .calculate {
   width: 50%;
@@ -169,6 +182,7 @@
       width: 50%;
       height: 100%;
       border-radius: 50%;
+      transition: background-color 0.5s;
       background-color: $highOrange;
     }
     .circle:nth-of-type(1) {
@@ -186,9 +200,10 @@
       left: 110px;
     }
     .word {
+      z-index: 8;
       position: absolute;
       top: 30px;
-      left: 0;
+      left: -30px;
       color: $doing;
       font-size: 25px;
       transform: rotate(-30deg);
@@ -211,6 +226,7 @@
   }
   &-count {
     color: $highOrange;
+    transition: color 0.5s;
     font-size: 80px;
     text-align: right;
     margin-bottom: 20px;
@@ -245,6 +261,7 @@
       padding: 10px;
       input {
         margin-right: 5px;
+        padding: 10px
       }
     }
   }
@@ -255,42 +272,189 @@
 </style>
 
 <script>
-import $ from 'jquery';
+import $ from "jquery";
+import moment from "moment";
+import { clearInterval } from "timers";
 export default {
   data() {
     return {
-      tomatoNum:'',
-      isPress:false,
-      toDoTasking: "",
-      toDoTask: "",
-      allToDoTask: ["123"]
+      rest: false, //true是休息的倒數,false是工作的倒數
+      play: true, //true代表出現播放鍵,false代表出現暫停鍵
+      time: "", //現在倒數的時間
+      stop: "", //setInterval的回傳值
+      tomatoNum: "", //已按下幾個番茄  *要被放到done
+      isPress: false, //控制有無按下番茄
+      toDoTasking: "", //*要被放到done
+      toDoTask: "", //*要被放到todo
+      allToDoTask: ["123"], //所有的todo
+      myInterval: "", //用到停止計時
+      moment: moment
     };
   },
   methods: {
+    countDown() {
+      if (this.toDoTasking&&  this.tomatoNum) {
+        //先篩選有無選到任一個任務
+        const vm = this;
+        this.play = !this.play;
+        if (this.play) {
+          //停止
+          window.clearInterval(this.myInterval);
+        } else {
+          //播放
+          let isFinish = "";
+          this.myInterval = window.setInterval(() => {
+            console.log(456);
+
+            const timeString = this.time
+              .toString()
+              .split(" ")[4]
+              .split(":");
+
+            if (timeString[1] === "24" && timeString[2] === "57") {
+              //時間到要做的事
+              isFinish = true;
+              this.play = true;
+            } else {
+              isFinish = false;
+            }
+
+            if (isFinish) {
+              //時間到要做的事
+              window.clearInterval(this.myInterval);
+              this.rest = true;
+              const time = new Date();
+              time.setMinutes(5);
+              time.setSeconds(0);
+              this.time = time;
+              //改顏色
+              document.querySelectorAll(".circle").forEach(e => {
+                e.classList.add("yellowBack");
+              });
+              document
+                .querySelector(".calculate-count")
+                .classList.add("yellowFont");
+              //改字
+              document.querySelector(".word").textContent = "Break time!";
+            } else {
+              vm.time = new Date(vm.time.setSeconds(vm.time.getSeconds() - 1));
+            }
+          }, 1000);
+          this.stop = this.myInterval;
+        }
+      } else {
+        alert("請先選擇任務及番茄數量");
+      }
+    },
+    stopInterval() {
+      if (!this.stop) {
+        return;
+      } else {
+        window.clearInterval(this.stop);
+        const time = new Date();
+        time.setMinutes(25);
+        time.setSeconds(0);
+        this.time = time;
+        this.play = true;
+        //改顏色
+        if (this.rest) {
+          document.querySelectorAll(".circle").forEach(e => {
+            e.classList.remove("yellowBack");
+          });
+          document
+            .querySelector(".calculate-count")
+            .classList.remove("yellowFont");
+          //改字
+          document.querySelector(".word").textContent = "Break time!";
+        }
+        this.rest = false;
+      }
+    },
+    countDown2() {
+      this.play = !this.play;
+      if (this.play) {
+        //停止
+        window.clearInterval(this.myInterval);
+      } else {
+        //播放
+        let isFinish = "";
+        this.myInterval = window.setInterval(() => {
+          const timeString = this.time
+            .toString()
+            .split(" ")[4]
+            .split(":");
+          if (timeString[1] === "04" && timeString[2] === "30") {
+            //時間到要做的事
+            console.log(123);
+            isFinish = true;
+            this.play = true;
+          } else {
+            isFinish = false;
+          }
+          if (isFinish) {
+            //時間到要做的事
+            window.clearInterval(this.myInterval);
+            this.rest = false;
+            const time = new Date();
+            time.setMinutes(25);
+            time.setSeconds(0);
+            this.time = time;
+            //改顏色
+            document.querySelectorAll(".circle").forEach(e => {
+              e.classList.remove("yellowBack");
+            });
+            document
+              .querySelector(".calculate-count")
+              .classList.remove("yellowFont");
+            //改字
+            document.querySelector('.word').textContent='Break time!'
+          } else {
+            this.time = new Date(
+              this.time.setSeconds(this.time.getSeconds() - 1)
+            );
+          }
+        }, 1000);
+        this.stop = this.myInterval;
+      }
+    },
     toDo() {
       this.allToDoTask.push(this.toDoTask);
       this.toDoTask = "";
     },
-    calculateTomato(val){
-      this.isPress=true
-      this.tomatoNum?'':this.tomatoNum=val
+    calculateTomato(val) {
+      this.isPress = true;
+      this.tomatoNum ? "" : (this.tomatoNum = val);
     }
   },
   computed: {
-    toBright(){
-      this.brightDom
+    toBright() {
+      this.brightDom;
     }
   },
   mounted() {
-    const vm=this
-    document.querySelectorAll(".calculate-num i").forEach(function(item){
-      item.addEventListener("mouseenter", function(e){
-        vm.isPress?'':$(this).prevAll().addBack().addClass('bright');
+    const vm = this;
+    document.querySelectorAll(".calculate-num i").forEach(function(item) {
+      item.addEventListener("mouseenter", function(e) {
+        vm.isPress
+          ? ""
+          : $(this)
+              .prevAll()
+              .addBack()
+              .addClass("bright");
       });
-      item.addEventListener("mouseleave", function(e){
-        vm.isPress?'':$(this).prevAll().addBack().removeClass('bright');
+      item.addEventListener("mouseleave", function(e) {
+        vm.isPress
+          ? ""
+          : $(this)
+              .prevAll()
+              .addBack()
+              .removeClass("bright");
       });
     });
+    const time = new Date();
+    time.setMinutes(25);
+    time.setSeconds(0);
+    this.time = time;
   }
 };
 </script>
