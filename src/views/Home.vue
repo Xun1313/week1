@@ -8,8 +8,8 @@
           <div class="grass grass-3"></div>
         </div>
         <div class="circles">
-          <i class="fas" v-if="!rest" :class="[play?'fa-play':'fa-pause']" @click="countDown()"></i>
-          <i class="fas" v-if="rest" :class="[play?'fa-play':'fa-pause']" @click="countDown2()"></i>
+          <i class="fas" :class="[play?'fa-play':'fa-pause']" @click="sameCountDown()"></i>
+          <!-- <i class="fas" v-if="rest" :class="[play?'fa-play':'fa-pause']" @click="countDown2()"></i> -->
           <div class="circle"></div>
           <div class="circle"></div>
           <div class="circle"></div>
@@ -28,9 +28,9 @@
           :data-id="index+1"
           @click="calculateTomato(item)"
         ></i>
-      </div>
-      <div class="calculate-title" v-if="!done.toDoTasking">請選擇一個任務</div>
-      <div class="calculate-title" v-else>{{done.toDoTasking}}</div>
+      </div> <!-- v-if="!done.toDoTasking" -->
+      <div class="calculate-title">{{done.toDoTasking}}</div>
+      <!-- <div class="calculate-title" v-else>{{done.toDoTasking}}</div> -->
       <div class="calculate-count">
         {{moment(time).format('mm:ss')}}
         <i class="fas fa-redo-alt" @click="stopInterval()"></i>
@@ -56,7 +56,7 @@
             {{item}}
           </div>
         </template>
-        <p v-if="todo.allToDoTask.length>3">其餘到任務列表確認</p>
+        <!-- <p v-if="todo.allToDoTask.length>3">其餘到任務列表確認</p> -->
       </div>
     </div>
   </div>
@@ -294,7 +294,7 @@ export default {
       toDoTask: "", //*要被放到todo
       done: {
         tomatoNum: "", //已按下幾個番茄  *要被放到done
-        toDoTasking: "" //*正在進行的任務 done
+        toDoTasking: "請選擇一個任務" //*正在進行的任務 done
       },
       todo: {
         allToDoTask: [] //所有的todo
@@ -305,76 +305,27 @@ export default {
     };
   },
   methods: {
-    countDown() {
-      if (this.done.toDoTasking && this.done.tomatoNum) {
-        //先篩選有無選到任一個任務
-        this.play = !this.play;
-        if (this.play) {
-          //停止
-          window.clearInterval(this.myInterval);
+    countDown(isFinish) {
+        //時間到要做的事
+        const getDone = localStorage.getItem("done")
+        if (getDone) {
+          //本來就有值
+          const tempDone = JSON.parse(getDone);
+          tempDone.push(this.done);
+          localStorage.setItem("done", JSON.stringify(tempDone));
         } else {
-          //播放
-          let isFinish = "";
-          this.myInterval = window.setInterval(() => {
-            const timeString = this.time
-              .toString()
-              .split(" ")[4]
-              .split(":");
-
-            if (timeString[1] === "24" && timeString[2] === "58") {
-              //時間到要做的事
-              isFinish = true;
-              this.play = true;
-            } else {
-              isFinish = false;
-            }
-
-            if (isFinish) {
-              //時間到要做的事
-              window.clearInterval(this.myInterval);
-              this.rest = true;
-              const time = new Date();
-              time.setMinutes(5);
-              time.setSeconds(0);
-              this.time = time;
-              //改顏色
-              document.querySelectorAll(".circle").forEach(e => {
-                e.classList.add("yellowBack");
-              });
-              document
-                .querySelector(".calculate-count")
-                .classList.add("yellowFont");
-
-              //改字
-              document.querySelector(".word").textContent = "Break time!";
-
-              const getDone = localStorage.getItem("done");
-              if (getDone) {
-                //本來就有值
-                const tempDone = JSON.parse(getDone);
-                tempDone.push(this.done);
-                localStorage.setItem("done", tempDone);
-              } else {
-                //本來沒值
-                localStorage.setItem("done", JSON.stringify([this.done]));
-              }
-
-              //清空done的物件,才能執行下一次任務,以及番茄要能重新選
-              const toDoTasking = this.done.toDoTasking;
-              const allToDoTask = this.todo.allToDoTask;
-              this.todo.allToDoTask.splice(allToDoTask.indexOf(toDoTasking), 1);
-              this.isPress = false;
-              this.done.tomatoNum = "";
-              this.done.toDoTasking = "";
-            } else {
-              this.time = new Date(this.time.setSeconds(this.time.getSeconds() - 1));
-            }
-          }, 1000);
-          this.stop = this.myInterval;
+          //本來沒值
+          localStorage.setItem("done", JSON.stringify([this.done]));
         }
-      } else {
-        alert("請先選擇任務及番茄數量");
-      }
+
+        //清空done的物件,才能執行下一次任務,以及番茄要能重新選
+        const toDoTasking = this.done.toDoTasking;
+        const allToDoTask = this.todo.allToDoTask;
+        let spliceIndex=allToDoTask.indexOf(toDoTasking)
+        allToDoTask.splice(spliceIndex,1)
+        localStorage.setItem('todo',JSON.stringify(allToDoTask))
+        this.isPress = false
+        allToDoTask.length?this.done.toDoTasking=allToDoTask[0]:this.done.toDoTasking='請選擇一個任務'
     },
     stopInterval() {
       if (!this.stop) {
@@ -402,101 +353,73 @@ export default {
         this.rest = false;
       }
     },
-    countDown2() {
-      this.play = !this.play;
-      if (this.play) {
-        //停止
-        window.clearInterval(this.myInterval);
-      } else {
-        //播放
-        let isFinish = "";
-        this.myInterval = window.setInterval(() => {
-          const timeString = this.time
-            .toString()
-            .split(" ")[4]
-            .split(":");
-          if (timeString[1] === "04" && timeString[2] === "30") {
-            //時間到要做的事
-            isFinish = true;
-            this.play = true;
-          } else {
-            isFinish = false;
-          }
-          if (isFinish) {
-            //時間到要做的事
-            window.clearInterval(this.myInterval);
-            this.rest = false;
-            const time = new Date();
-            time.setMinutes(25);
-            time.setSeconds(0);
-            this.time = time;
-            //改顏色
-            document.querySelectorAll(".circle").forEach(e => {
-              e.classList.remove("yellowBack");
-            });
-            document
-              .querySelector(".calculate-count")
-              .classList.remove("yellowFont");
-            //改字
-            document.querySelector(".word").textContent = "Break time!";
-          } else {
-            this.time = new Date(
-              this.time.setSeconds(this.time.getSeconds() - 1)
-            );
-          }
-        }, 1000);
-        this.stop = this.myInterval;
-      }
-    },
     sameCountDown() {
-      this.play = !this.play;
-      if (this.play) {
-        //停止
-        window.clearInterval(this.myInterval);
-      } else {
-        //播放
-        let isFinish = "";
-        this.myInterval = window.setInterval(() => {
-          const timeString = this.time
-            .toString()
-            .split(" ")[4]
-            .split(":");
-          if (timeString[1] === "04" && timeString[2] === "30") {
-            //時間到要做的事
-            isFinish = true;
-            this.play = true;
-          } else {
-            isFinish = false;
-          }
-          if (isFinish) {
-            //時間到要做的事
-            window.clearInterval(this.myInterval);
-            this.rest = false;
-            const time = new Date();
-            time.setMinutes(25);
-            time.setSeconds(0);
-            this.time = time;
-            //改顏色
-            document.querySelectorAll(".circle").forEach(e => {
-              e.classList.remove("yellowBack");
-            });
-            document
-              .querySelector(".calculate-count")
-              .classList.remove("yellowFont");
-            //改字
-            document.querySelector(".word").textContent = "Break time!";
-          } else {
-            this.time = new Date(
-              this.time.setSeconds(this.time.getSeconds() - 1)
-            );
-          }
-        }, 1000);
-        this.stop = this.myInterval;
+      if (this.done.toDoTasking && this.done.tomatoNum) {
+        //先篩選有無選到任一個任務
+
+        let minutes = "";
+        let seconds = "";
+        let toMinute=''
+        this.play = !this.play;
+        if (this.rest) {
+          minutes = "04";
+          seconds = "59";
+        } else {
+          minutes = "24";
+          seconds = "59";
+        }
+        if (this.play) {
+          //停止
+          window.clearInterval(this.myInterval);
+        } else {
+          //播放
+          let isFinish = "";
+          this.myInterval = window.setInterval(() => {
+            const timeString = this.time
+              .toString()
+              .split(" ")[4]
+              .split(":");
+            if (timeString[1] === minutes && timeString[2] === seconds) {
+              //時間到要做的事
+              isFinish = true;
+              this.play = true;
+            } else {
+              isFinish = false;
+            }
+            if (isFinish) {
+              //時間到要做的事
+              window.clearInterval(this.myInterval);
+              this.rest = !this.rest;
+              const time = new Date();
+              this.rest?toMinute=5:toMinute=25
+              time.setMinutes(toMinute);
+              time.setSeconds(0);
+              this.time = time;
+              //改顏色
+              document.querySelectorAll(".circle").forEach(e => {
+                e.classList.toggle("yellowBack");
+              });
+              document
+                .querySelector(".calculate-count")
+                .classList.toggle("yellowFont");
+              //改字
+              document.querySelector(".word").textContent = "Break time!";
+              this.rest ? this.countDown():this.done.tomatoNum=''; //用來呼叫計時器不同處
+            } else {
+              this.time = new Date(
+                this.time.setSeconds(this.time.getSeconds() - 1)
+              );
+            }
+          }, 1000);
+          this.stop = this.myInterval;
+        }
+      }else {
+        alert("請先選擇任務及番茄數量");
       }
     },
     toDo() {
       this.todo.allToDoTask.push(this.toDoTask);
-      localStorage.setItem("todo", JSON.stringify(this.todo));
+      localStorage.setItem("todo", JSON.stringify(this.todo.allToDoTask));
       this.toDoTask = "";
     },
     calculateTomato(val) {
@@ -539,7 +462,7 @@ export default {
     this.time = time;
 
     const todo = JSON.parse(localStorage.getItem("todo"));
-    todo ? (this.todo.allToDoTask = todo.allToDoTask) : "";
+    todo ? (this.todo.allToDoTask = todo) : "";
   },
   beforeDestroy() {
     window.clearInterval(this.myInterval);
