@@ -15,6 +15,11 @@ export default new Router({
           name: 'home',
           component: () => import(/* webpackChunkName: "home" */ './views/home.vue'),
         },
+        {
+          path: '/todo',
+          name: 'todo',
+          component: () => import(/* webpackChunkName: "todo" */ './views/todo.vue'),
+        },
       ],
     },
   ],

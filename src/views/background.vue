@@ -8,7 +8,10 @@
     <div class="dashboard-content">
       <div class="dashboard-content-menu">
         <i class="fas fa-apple-alt"></i>
-        <i class="fas fa-list-ul"></i>
+        <router-link to="/todo">
+          <i class="fas fa-list-ul"></i>
+        </router-link>
+
         <i class="fas fa-chart-bar"></i>
         <i class="fas fa-music"></i>
       </div>
@@ -48,8 +51,8 @@
         font-size: 30px;
         cursor: pointer;
       }
-      i:hover{
-        color: lighten(#00000062, 10%)
+      i:hover {
+        color: lighten(#00000062, 10%);
       }
     }
     &-all {
