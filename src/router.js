@@ -20,6 +20,11 @@ export default new Router({
           name: 'todo',
           component: () => import(/* webpackChunkName: "todo" */ './views/todo.vue'),
         },
+        {
+          path: '/statistic',
+          name: 'statistic',
+          component: () => import(/* webpackChunkName: "statistic" */ './views/statistic.vue'),
+        },
       ],
     },
   ],
