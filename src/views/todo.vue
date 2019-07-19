@@ -62,11 +62,13 @@
     .todo,
     .done {
       width: 40%;
+      z-index: 20;
+      background-color: white;
       &-title {
         margin-bottom: 15px;
         color: white;
         background-color: $middleOrange;
-        padding: 10px;
+        padding: 5px;
       }
       &-item {
         opacity: 1;

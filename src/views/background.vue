@@ -111,7 +111,7 @@ export default {
       time:'',
     }
   },
-  mounted() {
+  created() {
     this.$bus.$on("tomato", (smallTomato) => {
       this.smallTomato=smallTomato;
     });

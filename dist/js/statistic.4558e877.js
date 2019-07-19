@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["statistic"],{"85b3":function(t,n,e){"use strict";e.r(n);var s=function(){var t=this,n=t.$createElement,e=t._self._c||n;return e("div")},c=[],i=e("2877"),l={},u=Object(i["a"])(l,s,c,!1,null,null,null);n["default"]=u.exports}}]);
+//# sourceMappingURL=statistic.4558e877.js.map

@@ -2,13 +2,13 @@
 
 .smallTomato{
   position: absolute;
-  bottom: -180px;
-  right: -50px;
+  bottom: -220px;
+  right: -88px;
   .calculate-count{
     z-index: 10;
     position: absolute;
     top: 0;
-    left: 130px;
+    left: 150px;
     color: white;
   }
 }
@@ -170,13 +170,13 @@
   }
   &-title {
     color: $doing;
-    font-size: 50px;
+    font-size: 30px;
     margin-bottom: 20px;
   }
   &-count {
     color: $highOrange;
     transition: color 0.5s;
-    font-size: 80px;
+    font-size: 60px;
     text-align: right;
     margin-bottom: 58px;
     i {

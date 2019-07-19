@@ -61,18 +61,6 @@
 <style lang="scss" scoped>
 @import "../assets/_variables.scss";
 @import "../assets/tomato.scss";
-/* .smallTomato{
-  position: absolute;
-  bottom: -180px;
-  right: -50px;
-  .calculate-count{
-    z-index: 10;
-    position: absolute;
-    top: 0;
-    left: 130px;
-    color: white;
-  }
-} */
 .home {
   display: flex;
   margin-top: 55px;
@@ -85,184 +73,7 @@
 .yellowFont {
   color: $yellowApple !important;
 }
-/* .calculate,
-.smallTomato {
-  width: 50%;
-  &-pic {
-    width: 450px;
-    height: 285px;
-    position: relative;
-    margin-bottom: 20px;
-    .grasses {
-      z-index: 1;
-      //outline: 1px red solid;
-      width: 150px;
-      height: 60px;
-      position: absolute;
-      top: -20px;
-      left: 142px;
-      .grass {
-        position: absolute;
-      }
-      .grass-1 {
-        top: -38px;
-        left: 20px;
-        background-color: $grass;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        position: relative;
-      }
-      .grass-1::after {
-        //display: none;
-        z-index: 4;
-        content: "";
-        position: absolute;
-        top: -23px;
-        left: 20px;
-        width: 70px;
-        height: 70px;
-        background-color: white;
-        transform: rotate(43deg);
-      }
-      .grass-2 {
-        z-index: 5;
-        top: -45px;
-        left: 41px;
-        background-color: $grass;
-        width: 70px;
-        height: 70px;
-        position: absolute;
-      }
-      .grass-2::before {
-        z-index: 3;
-        content: "";
-        position: absolute;
-        background-color: white;
-        width: 55px;
-        height: 40px;
-        top: -11px;
-        left: -15px;
-        transform: rotate(133deg);
-      }
-      .grass-2::after {
-        z-index: 3;
-        content: "";
-        position: absolute;
-        background-color: white;
-        width: 60px;
-        height: 40px;
-        top: -18px;
-        right: -16px;
-        transform: rotate(47deg);
-      }
-      .grass-3 {
-        background-color: $grass;
-        top: -38px;
-        right: 20px;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        position: absolute;
-      }
-      .grass-3::after {
-        display: none;
-        z-index: 3;
-        content: "";
-        position: absolute;
-        top: -23px;
-        right: 25px;
-        width: 70px;
-        height: 70px;
-        background-color: white;
-        transform: rotate(43deg);
-      }
-    }
-    .circles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      i {
-        font-size: 70px;
-        color: white;
-        position: absolute;
-        top: 100px;
-        left: 200px;
-        z-index: 7;
-        cursor: pointer;
-      }
-      i:hover {
-        color: darken(white, 10%);
-      }
-    }
-    .circle {
-      z-index: 2;
-      position: absolute;
-      width: 50%;
-      height: 100%;
-      border-radius: 50%;
-      transition: background-color 0.5s;
-      background-color: $highOrange;
-    }
-    .circle:nth-of-type(1) {
-      top: -11px;
-      left: 62px;
-    }
-    .circle:nth-of-type(2) {
-      top: -11px;
-      right: 62px;
-    }
-    .circle:nth-of-type(3) {
-      border-radius: 42%;
-      height: 50%;
-      bottom: 0;
-      left: 110px;
-    }
-    .word {
-      z-index: 8;
-      position: absolute;
-      top: 30px;
-      left: -30px;
-      color: $doing;
-      font-size: 25px;
-      transform: rotate(-30deg);
-    }
-  }
-  &-num {
-    display: flex;
-    justify-content: flex-end;
-    i {
-      cursor: pointer;
-      //color: gray;
-      margin-right: 5px;
-      font-size: 22px;
-    }
-  }
-  &-title {
-    color: $doing;
-    font-size: 50px;
-    margin-bottom: 20px;
-  }
-  &-count {
-    color: $highOrange;
-    transition: color 0.5s;
-    font-size: 80px;
-    text-align: right;
-    margin-bottom: 72px;
-    i {
-      cursor: pointer;
-      font-size: 20px;
-      color: $doing;
-      vertical-align: top;
-      margin-bottom: 20px;
-    }
-    i:hover {
-      color: darken($doing, 10%);
-    }
-  }
-} */
+
 .mission {
   display: flex;
   flex-direction: column;
@@ -325,7 +136,6 @@ import moment from "moment";
 export default {
   data() {
     return {
-      smallTomato: false,
       rest: false, //true是休息的倒數,false是工作的倒數
       play: true, //true代表出現播放鍵,false代表出現暫停鍵
       time: "", //現在倒數的時間
@@ -402,11 +212,11 @@ export default {
         let toMinute = "";
         this.play = !this.play;
         if (this.rest) {
-          minutes = "04";
+          minutes = "00";
           seconds = "59";
         } else {
-          minutes = "24";
-          seconds = "59";
+          minutes = "00";
+          seconds = "00";
         }
         if (this.play) {
           //停止
