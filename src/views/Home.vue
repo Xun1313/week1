@@ -25,7 +25,8 @@
         ></i>
       </div>
       <!-- v-if="!done.toDoTasking" -->
-      <div class="calculate-title">{{done.toDoTasking}}</div>
+      <div class="calculate-title" v-if="!done.toDoTasking">請選擇一個任務</div>
+      <div class="calculate-title" v-else>{{done.toDoTasking}}</div>
       <!-- <div class="calculate-title" v-else>{{done.toDoTasking}}</div> -->
       <div class="calculate-count">
         {{moment(time).format('mm:ss')}}
@@ -143,7 +144,7 @@ export default {
       toDoTask: "", //*要被放到todo
       done: {
         tomatoNum: "", //已按下幾個番茄  *要被放到done
-        toDoTasking: "請選擇一個任務" //*正在進行的任務 done
+        toDoTasking: "" //*正在進行的任務 done
       },
       todo: {
         allToDoTask: [] //所有的todo
